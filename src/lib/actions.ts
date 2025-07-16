@@ -36,7 +36,7 @@ export async function findBestCounters(enemyNames: string[]) {
 
   const finalReport = Array.from(heroScores.entries())
     // ✅✅✅ تغییر در اینجا: 'name' به '_' تبدیل شد ✅✅✅
-    .map(([_, data]) => ({
+    .map(([, data]) => ({
       ...data.heroObject,
       score: data.totalScore,
     }))
@@ -77,7 +77,7 @@ export async function findBestAllies(allyNames: string[]) {
   return (
     Array.from(heroScores.entries())
       // ✅✅✅ تغییر در اینجا: 'name' به '_' تبدیل شد ✅✅✅
-      .map(([_, data]) => ({
+      .map(([, data]) => ({
         ...data.heroObject,
         score: data.totalScore,
       }))
