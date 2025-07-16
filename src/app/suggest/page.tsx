@@ -110,16 +110,11 @@ async function SuggestionsList({
 }
 
 // این کامپوننت اصلی و والد صفحه است
-type SuggestPageProps = {
-  searchParams: {
-    enemies?: string;
-    allies?: string;
-  };
-};
-
-// کامپوننت اصلی صفحه که حالا از نوع جدید ما استفاده می‌کند
-export default function SuggestPage({ searchParams }: SuggestPageProps) {
-  // ۱. پارامترها را با احتیاط و با بررسی نوع می‌خوانیم
+export default function SuggestPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const enemiesParam = searchParams?.enemies;
   const enemyNames =
     typeof enemiesParam === "string" ? enemiesParam.split(",") : [];
