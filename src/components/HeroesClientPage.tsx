@@ -1,11 +1,19 @@
-// components/HeroesClientPage.tsx
+// src/components/HeroesClientPage.tsx (نسخه نهایی و اصلاح شده)
 "use client";
 
 import { HeroSelectionProvider } from "@/components/context/heroSelectionContext";
 import Header from "./header";
 import HeroSearchContainer from "./HeroSearchContainer";
+import type { Hero } from "@/components/draftTypes"; // ✅ ۱. نوع Hero را از فایل مرکزی وارد می‌کنیم
 
-export default function HeroesClientPage({ initialHeroes }) {
+// ✅ ۲. نوع پراپ‌ها را به صورت واضح تعریف می‌کنیم
+type HeroesClientPageProps = {
+  initialHeroes: Hero[];
+};
+
+export default function HeroesClientPage({
+  initialHeroes,
+}: HeroesClientPageProps) {
   return (
     // Provider در اینجا قرار می‌گیرد تا تمام فرزندان به آن دسترسی داشته باشند
     <HeroSelectionProvider>

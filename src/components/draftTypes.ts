@@ -1,31 +1,32 @@
-// types/DraftTypes.ts
+// فایل: draftTypes.ts (نسخه نهایی و کامل)
 
+import type { Dispatch, SetStateAction } from "react";
 export type Hero = {
   id: number;
-  name: string;
-  localized_name: string;
+  name: string; // نام داخلی مانند "npc_dota_hero_antimage"
+  localized_name: string; // نام نمایشی مانند "Anti-Mage"
+  primary_attr: "str" | "agi" | "int" | "all";
+  attack_type: "Melee" | "Ranged";
+  roles: string[];
+  legs: number;
 };
 
-export type Team = string | "ally" | "enemy";
+export type Team = "ally" | "enemy"; // 'string' را حذف کردم تا دقیق‌تر باشد
 
 export type DraftContextType = {
-  // بخش ۱: داده‌های فقط-خواندنی (Read-Only Data)
-  // کامپوننت‌ها این مقادیر را فقط برای نمایش استفاده می‌کنند.
+  // داده‌ها
   allyHeroes: (Hero | null)[];
   enemyHeroes: (Hero | null)[];
   selectedHero: Hero | null;
   activeTeam: Team;
   suggest: boolean;
-  setSuggest: (query: string) => void;
+  searchQuery: string;
 
-  // بخش ۲: عملیات‌ها (Actions)
-  // کامپوننت‌ها این توابع را برای درخواست تغییر در state فراخوانی می‌کنند.
+  // توابع به‌روزرسانی (Actions)
   handleHeroSelect: (hero: Hero) => void;
   setActiveTeam: (team: Team) => void;
-  setSugget: (a: string) => void;
-  // یک مثال دیگر برای یک عملیات مفید که می‌توانید اضافه کنید
   clearHeroSlot: (team: Team, slotIndex: number) => void;
   resetDraft: () => void;
-  searchQuery: string;
-  setSearchQuery: (qeury: string) => void;
+  setSearchQuery: (query: string) => void;
+  setSuggest: Dispatch<SetStateAction<boolean>>; // ✅ فقط تعریف صحیح باقی مانده
 };

@@ -1,12 +1,4 @@
-type Hero = {
-  id: number;
-  name: string;
-  localized_name: string;
-  primary_attr: "str" | "agi" | "int" | "all"; // اگر دقیق باشی
-  attack_type: "Melee" | "Ranged";
-  roles: string[];
-  legs: number;
-};
+import type { Hero } from "@/components/draftTypes"; // ۱. وارد کردن نوع اصلی Hero
 import { useHeroSelection } from "./context/heroSelectionContext";
 import Image from "next/image";
 

@@ -2,13 +2,9 @@
 
 import { useMemo } from "react";
 import HeroList from "./heroList";
-import Fuse from "fuse.js";
+import Fuse, { type IFuseOptions } from "fuse.js";
 import { useHeroSelection } from "./context/heroSelectionContext";
-type Hero = {
-  id: number;
-  name: string;
-  localized_name: string;
-};
+import type { Hero } from "@/components/draftTypes"; // ۱. وارد کردن نوع اصلی Hero
 
 // یک نوع جدید تعریف می‌کنیم که فیلد حروف اول را هم داشته باشد
 type HeroWithInitials = Hero & {
@@ -38,7 +34,7 @@ export default function HeroSearchContainer({ initialHeroes }: Props) {
   }, [initialHeroes]);
 
   const fuse = useMemo(() => {
-    const options: Fuse.IFuseOptions<HeroWithInitials> = {
+    const options: IFuseOptions<HeroWithInitials> = {
       // ✅ ۲. به Fuse می‌گوییم در نام و حروف اول جستجو کند
       // ما به حروف اول وزن بیشتری می‌دهیم تا در اولویت باشند
       keys: [
