@@ -110,11 +110,8 @@ async function SuggestionsList({
 }
 
 // این کامپوننت اصلی و والد صفحه است
-export default function SuggestPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function SuggestPage({ searchParams }: { searchParams: any }) {
   const enemiesParam = searchParams?.enemies;
   const enemyNames =
     typeof enemiesParam === "string" ? enemiesParam.split(",") : [];
