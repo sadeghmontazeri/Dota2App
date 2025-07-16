@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum MatchupType {
+  BAD_AGAINST
+  GOOD_AGAINST
+  GOOD_WITH
+}
+
+model Hero {
+  id                Int       @id @default(autoincrement())
+  name              String    @unique
+  localized_name    String
+
+  matchups          Matchup[] @relation("heroMatchups")
+  relatedInMatchups Matchup[] @relation("relatedHeroMatchups")
+}
+
+model Matchup {
+  id            Int         @id @default(autoincrement())
+  advantage     Float
+  type          MatchupType
+
+  heroId        Int
+  hero          Hero        @relation("heroMatchups", fields: [heroId], references: [id])
+
+  relatedHeroId Int
+  relatedHero   Hero        @relation("relatedHeroMatchups", fields: [relatedHeroId], references: [id])
+
+  @@unique([heroId, relatedHeroId, type])
+}
