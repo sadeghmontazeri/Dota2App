@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useHeroSelection } from "@/components/context/heroSelectionContext"; // فرض می‌کنیم کانتکست شما اینجاست
 
 export default function SearchInput() {
-  const { searchQuery, setSearchQuery } = useHeroSelection();
+  const { setSearchQuery } = useHeroSelection();
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null); // برای دسترسی مستقیم به اینپوت (جهت focus/blur)
 

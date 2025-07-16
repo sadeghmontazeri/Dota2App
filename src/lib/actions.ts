@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
-import { MatchupType, Hero } from "@prisma/client"; // ✅ نوع Hero را هم وارد می‌کنیم
+import { MatchupType, Hero } from "@prisma/client";
 
 function advantageToScore(advantage: number): number {
-  return advantage * -1.25;
+  return advantage * -1;
 }
 
 export async function findBestCounters(enemyNames: string[]) {
@@ -10,14 +10,10 @@ export async function findBestCounters(enemyNames: string[]) {
 
   const allRelevantMatchups = await prisma.matchup.findMany({
     where: {
-      hero: {
-        name: { in: enemyNames },
-      },
+      hero: { name: { in: enemyNames } },
       type: { in: [MatchupType.GOOD_AGAINST, MatchupType.BAD_AGAINST] },
     },
-    include: {
-      relatedHero: true,
-    },
+    include: { relatedHero: true },
   });
 
   const heroScores = new Map<
@@ -26,7 +22,7 @@ export async function findBestCounters(enemyNames: string[]) {
   >();
 
   for (const matchup of allRelevantMatchups) {
-    const candidateHero = matchup.relatedHero; // این یک آبجکت کامل Hero است
+    const candidateHero = matchup.relatedHero;
     const score = advantageToScore(matchup.advantage);
 
     if (!heroScores.has(candidateHero.name)) {
@@ -39,8 +35,8 @@ export async function findBestCounters(enemyNames: string[]) {
   }
 
   const finalReport = Array.from(heroScores.entries())
-    .map(([name, data]) => ({
-      // ✅ تغییر ۲: با استفاده از spread operator (...) تمام مشخصات هیرو را برمی‌گردانیم
+    // ✅✅✅ تغییر در اینجا: 'name' به '_' تبدیل شد ✅✅✅
+    .map(([_, data]) => ({
       ...data.heroObject,
       score: data.totalScore,
     }))
@@ -54,17 +50,12 @@ export async function findBestAllies(allyNames: string[]) {
 
   const allRelevantMatchups = await prisma.matchup.findMany({
     where: {
-      hero: {
-        name: { in: allyNames },
-      },
+      hero: { name: { in: allyNames } },
       type: MatchupType.GOOD_WITH,
     },
-    include: {
-      relatedHero: true,
-    },
+    include: { relatedHero: true },
   });
 
-  // ✅ تغییر ۱: Map حالا آبجکت کامل هیرو را به همراه امتیاز ذخیره می‌کند
   const heroScores = new Map<
     string,
     { totalScore: number; heroObject: Hero }
@@ -77,17 +68,19 @@ export async function findBestAllies(allyNames: string[]) {
     if (!heroScores.has(candidateHero.name)) {
       heroScores.set(candidateHero.name, {
         totalScore: 0,
-        heroObject: candidateHero, // ✅ کل آبجکت هیرو را ذخیره می‌کنیم
+        heroObject: candidateHero,
       });
     }
     heroScores.get(candidateHero.name)!.totalScore += score;
   }
 
-  return Array.from(heroScores.entries())
-    .map(([name, data]) => ({
-      // ✅ تغییر ۲: تمام مشخصات هیرو را به همراه امتیاز برمی‌گردانیم
-      ...data.heroObject,
-      score: data.totalScore,
-    }))
-    .sort((a, b) => b.score - a.score);
+  return (
+    Array.from(heroScores.entries())
+      // ✅✅✅ تغییر در اینجا: 'name' به '_' تبدیل شد ✅✅✅
+      .map(([_, data]) => ({
+        ...data.heroObject,
+        score: data.totalScore,
+      }))
+      .sort((a, b) => b.score - a.score)
+  );
 }

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Input from "./input";
+import { useMemo } from "react";
 import HeroList from "./heroList";
 import Fuse from "fuse.js";
 import { useHeroSelection } from "./context/heroSelectionContext";
