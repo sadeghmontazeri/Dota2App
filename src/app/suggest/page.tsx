@@ -8,14 +8,12 @@ type SuggestPageProps = {
   };
 };
 export default async function SuggestPage({ searchParams }: SuggestPageProps) {
-  // ۱. داده‌ها در سرور کامپوننت آماده می‌شوند
+  // اینجا searchParams به درستی تایپ شده است
   const enemiesParam = searchParams?.enemies;
-  const enemyNames =
-    typeof enemiesParam === "string" ? enemiesParam.split(",") : [];
+  const enemyNames = enemiesParam ? enemiesParam.split(",") : [];
 
   const alliesParam = searchParams?.allies;
-  const allyNames =
-    typeof alliesParam === "string" ? alliesParam.split(",") : [];
+  const allyNames = alliesParam ? alliesParam.split(",") : [];
   // ۲. توابع Server Action به صورت همزمان فراخوانی می‌شوند
   // نکته: من findBestAllies را هم اضافه کردم که در کد شما نبود
   const [counterSuggestions, allyCounterSuggestions] = await Promise.all([
