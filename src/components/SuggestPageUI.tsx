@@ -106,7 +106,7 @@ export default function SuggestPageUI({
               <p>هیچ پیشنهاد مناسبی پیدا نشد.</p>
             ) : (
               <ol>
-                {allyCounterSuggestions.map((hero, index) => (
+                {allyCounterSuggestions.map((hero) => (
                   <li
                     key={hero.id}
                     className="flex  items-center justify-between p-1 border-b last:border-b-0"
