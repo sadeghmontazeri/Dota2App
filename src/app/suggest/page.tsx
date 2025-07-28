@@ -1,6 +1,6 @@
 import { findBestCounters, findAllyCounters } from "@/lib/actions";
 import { Suspense } from "react";
-import SuggestPageUI from "@/components/SuggestPageUI"; // کامپوننت UI را وارد کنید
+import SuggestPageUI from "@/components/SuggestPageUI"; // کامپوننت UI را وارد
 type SuggestPageProps = {
   searchParams: {
     enemies?: string;
