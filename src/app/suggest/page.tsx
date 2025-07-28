@@ -1,12 +1,13 @@
 import { findBestCounters, findAllyCounters } from "@/lib/actions";
 import { Suspense } from "react";
 import SuggestPageUI from "@/components/SuggestPageUI"; // کامپوننت UI را وارد کنید
-
-export default async function SuggestPage({
-  searchParams,
-}: {
-  searchParams?: Record<string, string | string[]>;
-}) {
+type SuggestPageProps = {
+  searchParams: {
+    enemies?: string;
+    allies?: string;
+  };
+};
+export default async function SuggestPage({ searchParams }: SuggestPageProps) {
   // ۱. داده‌ها در سرور کامپوننت آماده می‌شوند
   const enemiesParam = searchParams?.enemies;
   const enemyNames =
@@ -15,7 +16,6 @@ export default async function SuggestPage({
   const alliesParam = searchParams?.allies;
   const allyNames =
     typeof alliesParam === "string" ? alliesParam.split(",") : [];
-
   // ۲. توابع Server Action به صورت همزمان فراخوانی می‌شوند
   // نکته: من findBestAllies را هم اضافه کردم که در کد شما نبود
   const [counterSuggestions, allyCounterSuggestions] = await Promise.all([
