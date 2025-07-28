@@ -2,7 +2,11 @@ import { findBestCounters, findAllyCounters } from "@/lib/actions";
 import { Suspense } from "react";
 import SuggestPageUI from "@/components/SuggestPageUI"; // کامپوننت UI را وارد کنید
 
-export default async function SuggestPage({ searchParams }) {
+export default async function SuggestPage({
+  searchParams,
+}: {
+  searchParams?: Record<string, string | string[]>;
+}) {
   // ۱. داده‌ها در سرور کامپوننت آماده می‌شوند
   const enemiesParam = searchParams?.enemies;
   const enemyNames =

@@ -1,8 +1,20 @@
 "use client"; // این کامپوننت برای استفاده از هوک، باید کلاینت باشد
-
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // useRouter را اینجا وارد می‌کنیم
 import { IoReturnUpBackOutline } from "react-icons/io5";
+type Hero = {
+  id: number;
+  name: string;
+  localized_name: string;
+  score: number;
+};
+
+type Props = {
+  enemyDisplayNames?: string;
+  allyDisplayNames?: string;
+  counterSuggestions: Hero[];
+  allyCounterSuggestions: Hero[];
+};
 
 // این کامپوننت تمام داده‌های آماده شده را به عنوان prop دریافت می‌کند
 export default function SuggestPageUI({
@@ -10,7 +22,7 @@ export default function SuggestPageUI({
   allyDisplayNames, // ✅ پراپ جدید
   counterSuggestions,
   allyCounterSuggestions, // نام متغیر را اصلاح کردم تا با کد شما هماهنگ باشد
-}) {
+}: Props) {
   const router = useRouter(); // هوک را در کلاینت کامپوننت فراخوانی می‌کنیم
 
   return (
