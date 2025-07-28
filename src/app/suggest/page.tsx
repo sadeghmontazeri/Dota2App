@@ -2,20 +2,21 @@ import { findBestCounters, findAllyCounters } from "@/lib/actions";
 import { Suspense } from "react";
 import SuggestPageUI from "@/components/SuggestPageUI"; // کامپوننت UI را وارد
 type SuggestPageProps = {
-  searchParams: {
+  searchParams: Promise<{
     enemies?: string;
     allies?: string;
-  };
+  }>;
 };
 export default async function SuggestPage({ searchParams }: SuggestPageProps) {
-  // اینجا searchParams به درستی تایپ شده است
-  const enemiesParam = searchParams?.enemies;
+  // انتظار می‌رود که searchParams یک Promise باشد، پس باید آن را با await فراخوانی کنیم.
+  const params = await searchParams; // صبر می‌کنیم تا داده‌ها بارگذاری شوند
+
+  const enemiesParam = params?.enemies;
   const enemyNames = enemiesParam ? enemiesParam.split(",") : [];
 
-  const alliesParam = searchParams?.allies;
+  const alliesParam = params?.allies;
   const allyNames = alliesParam ? alliesParam.split(",") : [];
-  // ۲. توابع Server Action به صورت همزمان فراخوانی می‌شوند
-  // نکته: من findBestAllies را هم اضافه کردم که در کد شما نبود
+
   const [counterSuggestions, allyCounterSuggestions] = await Promise.all([
     findBestCounters(enemyNames, allyNames),
     findAllyCounters(allyNames, enemyNames), // <-- شما اینجا findAllyCounters را گذاشته بودید
