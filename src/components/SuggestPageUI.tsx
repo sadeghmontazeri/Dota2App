@@ -81,7 +81,7 @@ export default function SuggestPageUI({
                   >
                     <div className="flex bg-amber-200 justify-between items-center w-full gap-1">
                       <Image
-                        src={`https://api.opendota.com/apps/dota2/images/heroes/${hero.name}_full.png`}
+                        src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${hero.name}.png`}
                         alt={hero.localized_name}
                         width={59}
                         height={33}
@@ -125,7 +125,7 @@ export default function SuggestPageUI({
                   >
                     <div className="flex bg-green-200 justify-between items-center w-full gap-1">
                       <Image
-                        src={`https://api.opendota.com/apps/dota2/images/heroes/${hero.name}_full.png`}
+                        src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${hero.name}.png`}
                         alt={hero.localized_name}
                         width={59}
                         height={33}

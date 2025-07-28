@@ -7,9 +7,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "api.opendota.com",
+        // ✅ دامنه جدید را اینجا وارد کنید
+        hostname: "cdn.cloudflare.steamstatic.com",
         port: "",
-        pathname: "/apps/dota2/images/heroes/**",
+        pathname: "/apps/dota2/images/dota_react/heroes/**",
       },
     ],
   },
