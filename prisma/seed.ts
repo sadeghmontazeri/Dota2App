@@ -1,37 +1,47 @@
-// فایل: prisma/seed.ts (نسخه نهایی با مپ استاندارد)
+// prisma/seed.ts
+
 import { PrismaClient, MatchupType } from "@prisma/client";
 import matchupData from "./counterData.json";
 import heroesData from "./data_heroes.json";
 
 const prisma = new PrismaClient();
 
+// تعریف تایپ‌ها برای اطمینان از صحت داده‌ها
 type DotaHero = { id: number; name: string; localized_name: string };
 type MatchupJsonData = {
   [heroName: string]: {
-    [category: string]: { [relatedHeroName: string]: string };
+    id: string;
+    BadAgainst: { [relatedHeroName: string]: number };
+    GoodAgainst: { [relatedHeroName: string]: number };
+    GoodWith?: { [relatedHeroName: string]: number };
   };
 };
 
 // این تابع نام‌ها را به یک فرمت یکسان تبدیل می‌کند
 function standardizeName(name: string): string {
-  // "Anti-Mage" -> "antimage"
-  // "Wraith King" -> "wraithking"
   return name.toLowerCase().replace(/[\s-_']+/g, "");
 }
 
+// فقط یک تابع main وجود دارد
 async function main() {
   console.log(`--- شروع فرآیند Seed ---`);
 
+  console.log(`[SEED] 🗑️ در حال پاک کردن داده‌های قدیمی...`);
+  await prisma.matchup.deleteMany({});
+  await prisma.hero.deleteMany({});
+  console.log(`[SEED] ✅ داده‌های قدیمی پاک شدند.`);
+
   try {
-    // ۱. ساخت هیروها (این بخش صحیح بود)
+    // ۱. ساخت هیروها
     const heroesToCreate = (heroesData as DotaHero[]).map((hero) => ({
+      dotaId: hero.id, // ✅ اطمینان از وجود dotaId
       name: hero.name.replace("npc_dota_hero_", ""),
       localized_name: hero.localized_name,
     }));
     await prisma.hero.createMany({ data: heroesToCreate });
     console.log(`[SEED] ✅ ${heroesToCreate.length} هیرو در دیتابیس ساخته شد.`);
 
-    // ۲. ✅ ساخت Map با استفاده از نام‌های استاندارد شده
+    // ۲. ساخت Map برای پیدا کردن سریع ID ها
     const allHeroes = await prisma.hero.findMany();
     const heroMap = new Map(
       allHeroes.map((h) => [standardizeName(h.localized_name), h.id])
@@ -43,33 +53,40 @@ async function main() {
     // ۳. آماده‌سازی داده‌های روابط
     const matchupsToCreate = [];
     const typedMatchupData: MatchupJsonData = matchupData;
+
     for (const heroKey in typedMatchupData) {
-      // ✅ نام هیروی اصلی را قبل از جستجو در Map، استاندارد می‌کنیم
       const heroId = heroMap.get(standardizeName(heroKey));
       if (!heroId) {
-        console.log(`هشدار: ID برای هیروی اصلی ${heroKey} پیدا نشد.`);
+        console.warn(`هشدار: ID برای هیروی اصلی ${heroKey} پیدا نشد.`);
         continue;
       }
 
-      for (const category in typedMatchupData[heroKey]) {
-        let type: MatchupType;
-        if (category === "BadAgainst") type = MatchupType.BAD_AGAINST;
-        else if (category === "GoodAgainst") type = MatchupType.GOOD_AGAINST;
-        else if (category === "GoodWith") type = MatchupType.GOOD_WITH;
-        else continue;
+      const categories: (keyof (typeof typedMatchupData)[string])[] = [
+        "BadAgainst",
+        "GoodAgainst",
+        "GoodWith",
+      ];
 
-        for (const relatedHeroKey in typedMatchupData[heroKey][category]) {
-          // ✅ نام هیروی مرتبط را هم قبل از جستجو، استاندارد می‌کنیم
-          const relatedHeroId = heroMap.get(standardizeName(relatedHeroKey));
-          const advantage = parseFloat(
-            typedMatchupData[heroKey][category][relatedHeroKey]
-          );
-          if (heroId && relatedHeroId && !isNaN(advantage)) {
-            matchupsToCreate.push({ heroId, relatedHeroId, type, advantage });
-          } else {
-            console.log(
-              `هشدار: ID برای هیروی مرتبط ${relatedHeroKey} پیدا نشد.`
-            );
+      for (const category of categories) {
+        if (typedMatchupData[heroKey][category]) {
+          let type: MatchupType;
+          if (category === "BadAgainst") type = MatchupType.BAD_AGAINST;
+          else if (category === "GoodAgainst") type = MatchupType.GOOD_AGAINST;
+          else if (category === "GoodWith") type = MatchupType.GOOD_WITH;
+          else continue;
+
+          for (const relatedHeroKey in typedMatchupData[heroKey][category]) {
+            const relatedHeroId = heroMap.get(standardizeName(relatedHeroKey));
+            const advantage =
+              typedMatchupData[heroKey][category][relatedHeroKey];
+
+            if (heroId && relatedHeroId && !isNaN(advantage)) {
+              matchupsToCreate.push({ heroId, relatedHeroId, type, advantage });
+            } else if (!relatedHeroId) {
+              console.warn(
+                `هشدار: ID برای هیروی مرتبط ${relatedHeroKey} (برای ${heroKey}) پیدا نشد.`
+              );
+            }
           }
         }
       }
@@ -79,14 +96,24 @@ async function main() {
     );
 
     // ۴. ساخت روابط
-    await prisma.matchup.createMany({ data: matchupsToCreate });
-    console.log(
-      `[SEED] ✅ ${matchupsToCreate.length} رابطه با موفقیت ساخته شد.`
-    );
+    if (matchupsToCreate.length > 0) {
+      await prisma.matchup.createMany({ data: matchupsToCreate });
+      console.log(
+        `[SEED] ✅ ${matchupsToCreate.length} رابطه با موفقیت ساخته شد.`
+      );
+    }
   } catch (e) {
     console.error("⛔ یک خطای جدی در حین اجرای اسکریپت Seed رخ داد:", e);
     process.exit(1);
   }
 }
 
-main().finally(async () => await prisma.$disconnect());
+main()
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
