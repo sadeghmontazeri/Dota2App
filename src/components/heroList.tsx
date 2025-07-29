@@ -14,7 +14,7 @@ export default function HeroList({ heroes }: Props) {
       <div className="grid grid-cols-5 gap-3">
         {heroes.map((hero) => {
           const heroShortName = hero.name.replace("npc_dota_hero_", "");
-          const imageUrl = `http://cdn.dota2.com/apps/dota2/images/heroes/${heroShortName}_full.png`;
+          const imageUrl = `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${heroShortName}.png`;
 
           return (
             <div

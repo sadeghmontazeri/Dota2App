@@ -67,7 +67,7 @@ export default function SectionHero() {
           // همین منطق برای تیم خودی هم تکرار می‌شود
           if (hero) {
             const heroShortName = hero.name.replace("npc_dota_hero_", "");
-            const imageUrl = `http://cdn.dota2.com/apps/dota2/images/heroes/${heroShortName}_full.png`;
+            const imageUrl = `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${heroShortName}.png`;
             return (
               <div
                 onClick={() => {

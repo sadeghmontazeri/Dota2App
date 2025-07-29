@@ -1,19 +1,34 @@
 // next.config.mjs
 
+import withPWAInit from "@ducanh2912/next-pwa";
+
+const withPWA = withPWAInit({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ✅ این بخش را اضافه کنید
+  reactStrictMode: true, // (اختیاری) یک گزینه خوب برای توسعه
   images: {
+    // فقط از remotePatterns (روش جدید) استفاده می‌کنیم
     remotePatterns: [
       {
         protocol: "https",
-        // ✅ دامنه جدید را اینجا وارد کنید
         hostname: "cdn.cloudflare.steamstatic.com",
-        port: "",
-        pathname: "/apps/dota2/images/dota_react/heroes/**",
+      },
+      {
+        protocol: "https", // بهتر است آدرس cdn.dota2.com را با api.opendota.com جایگزین کنید
+        hostname: "api.opendota.com",
+      },
+      {
+        protocol: "http", // دامنه cdn.dota2.com از http استفاده می‌کند
+        hostname: "cdn.dota2.com", // اضافه کردن این دامنه
       },
     ],
   },
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);

@@ -10,10 +10,8 @@ type SuggestPageProps = {
 export default async function SuggestPage({ searchParams }: SuggestPageProps) {
   // انتظار می‌رود که searchParams یک Promise باشد، پس باید آن را با await فراخوانی کنیم.
   const params = await searchParams; // صبر می‌کنیم تا داده‌ها بارگذاری شوند
-
   const enemiesParam = params?.enemies;
   const enemyNames = enemiesParam ? enemiesParam.split(",") : [];
-
   const alliesParam = params?.allies;
   const allyNames = alliesParam ? alliesParam.split(",") : [];
 
